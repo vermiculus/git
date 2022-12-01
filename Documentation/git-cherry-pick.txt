@@ -38,9 +38,6 @@ happens:
 See linkgit:git-merge[1] for some hints on resolving such
 conflicts.
 
-Exits with code 0 on success (without encountering any conflicts) and
-code 1 if conflicts are encountered. Anything else is a fatal error.
-
 OPTIONS
 -------
 <commit>...::
@@ -164,6 +161,15 @@ include::rerere-options.txt[]
 SEQUENCER SUBCOMMANDS
 ---------------------
 include::sequencer.txt[]
+
+EXIT STATUS
+-----------
+
+On success, the exit status is `0`.
+
+When conflicts are encountered, the exit status is `1`.
+
+On any other error, the exit status may be any other non-zero value.
 
 EXAMPLES
 --------
