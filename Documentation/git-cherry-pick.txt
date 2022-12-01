@@ -38,6 +38,9 @@ happens:
 See linkgit:git-merge[1] for some hints on resolving such
 conflicts.
 
+Exits with code 0 on success (without encountering any conflicts) and
+code 1 if conflicts are encountered. Anything else is a fatal error.
+
 OPTIONS
 -------
 <commit>...::
