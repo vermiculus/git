@@ -408,6 +408,9 @@ static int push_with_options(struct transport *transport, struct refspec *rs,
 		fprintf(stderr, "%s", push_get_color(PUSH_COLOR_RESET));
 	}
 
+	if (flags & TRANSPORT_PUSH_DRY_RUN)
+		fprintf(stderr, _("[dry run complete]\n"));
+
 	err |= transport_disconnect(transport);
 	free(anon_url);
 	if (!err)
