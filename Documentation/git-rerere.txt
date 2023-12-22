@@ -41,10 +41,15 @@ Reset the metadata used by rerere if a merge resolution is to be
 aborted.  Calling 'git am [--skip|--abort]' or 'git rebase [--skip|--abort]'
 will automatically invoke this command.
 
+Note this does not clear recorded resolutions. Once a conflict has been
+resolved and that resolution has been recorded, use 'forget'.
+
 'forget' <pathspec>::
 
 Reset the conflict resolutions which rerere has recorded for the current
-conflict in <pathspec>.
+conflict in <pathspec>. After using 'forget', you may wish to use 'git
+checkout --merge <pathspec>' to re-create the merge conflict and resolve it
+differently.
 
 'diff'::
 
