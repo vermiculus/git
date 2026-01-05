@@ -1,15 +1,18 @@
 use std::{cmp::Ordering, collections::BinaryHeap, ffi::c_void, sync::Arc};
 
+type EntryComparator<'a, T> = Arc<dyn Fn(&Entry<T>, &Entry<T>) -> Ordering + 'a>;
+type EntryComparatorRaw<'a, T, D> = Option<&'a dyn Fn(&T, &T, Option<&D>) -> i32>;
+
 #[allow(dead_code)]
 struct Entry<'a, T> {
     ctr: usize,
     data: T,
-    compare: Arc<dyn Fn(&Entry<T>, &Entry<T>) -> Ordering + 'a>,
+    compare: EntryComparator<'a, T>,
 }
 
 impl<'a, T> Ord for Entry<'a, T> {
     fn cmp(&self, other: &Self) -> Ordering {
-        (self.compare)(&self, &other)
+        (self.compare)(self, other)
     }
 }
 
@@ -29,7 +32,7 @@ impl<'a, T> PartialEq for Entry<'a, T> {
 
 #[allow(dead_code)]
 pub struct PriorityQueue<'a, T, D> {
-    compare: Arc<dyn Fn(&Entry<T>, &Entry<T>) -> Ordering + 'a>,
+    compare: EntryComparator<'a, T>,
     insertion_ctr: usize,
     cb_data: Option<&'a D>,
     array: BinaryHeap<Entry<'a, T>>,
@@ -49,11 +52,7 @@ impl<'a, T: 'a, D: 'a> PriorityQueue<'a, T, D> {
             array: BinaryHeap::new(),
         }
     }
-    fn set_comparator(
-        &mut self,
-        compare: Option<&'a dyn Fn(&T, &T, Option<&D>) -> i32>,
-        cb_data: Option<&'a D>,
-    ) {
+    fn set_comparator(&mut self, compare: EntryComparatorRaw<'a, T, D>, cb_data: Option<&'a D>) {
         self.cb_data = cb_data;
 
         self.compare = Arc::new(move |one: &Entry<T>, two: &Entry<T>| {
@@ -124,12 +123,20 @@ impl<'a, T: 'a, D: 'a> PriorityQueue<'a, T, D> {
 }
 
 #[repr(C)]
-pub struct PriorityQueueHandle {
+pub struct PriorityQueueCHandle {
     pub(crate) inner: *mut PriorityQueue<'static, *mut c_void, *mut c_void>,
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn prio_queue_put(queue: *mut PriorityQueueHandle, thing: *mut c_void) {
+/// Put an item into the priority queue.
+///
+/// # Safety
+///
+/// The caller must ensure that `queue` is a valid pointer to a
+/// `PriorityQueueCHandle` and that `thing` is a valid pointer to the item to be
+/// inserted. The caller is responsible for managing the memory of `thing` and
+/// for ensuring that its payload type is the queue's established payload type.
+pub unsafe extern "C" fn prio_queue_put(queue: *mut PriorityQueueCHandle, thing: *mut c_void) {
     let handle = match queue.as_mut() {
         Some(h) => h,
         None => return,
