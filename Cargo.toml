@@ -8,3 +8,4 @@ rust-version = "1.49.0"
 crate-type = ["staticlib"]
 
 [dependencies]
+libc = "0.2.163"
