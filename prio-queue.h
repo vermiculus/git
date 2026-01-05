@@ -19,15 +19,16 @@
  * subtracting "two" from "one" (i.e. negative if "one" sorts earlier
  * than "two").
  */
-typedef int (*prio_queue_compare_fn)(const void *one, const void *two, void *cb_data);
+typedef long (*prio_queue_key_fn)(const void *thing, void *cb_data);
 
 struct prio_queue_entry {
 	size_t ctr;
+	long key;
 	void *data;
 };
 
 struct prio_queue {
-	prio_queue_compare_fn compare;
+	prio_queue_key_fn compute_key;
 	size_t insertion_ctr;
 	void *cb_data;
 	size_t alloc, nr;
