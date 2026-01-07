@@ -1238,7 +1238,6 @@ LIB_OBJS += pathspec.o
 LIB_OBJS += pkt-line.o
 LIB_OBJS += preload-index.o
 LIB_OBJS += pretty.o
-LIB_OBJS += prio-queue.o
 LIB_OBJS += progress.o
 LIB_OBJS += promisor-remote.o
 LIB_OBJS += prompt.o
@@ -1362,6 +1361,7 @@ LIB_OBJS += xdiff/xprepare.o
 LIB_OBJS += xdiff/xutils.o
 ifndef WITH_RUST
 LIB_OBJS += varint.o
+LIB_OBJS += prio-queue.o
 endif
 
 BUILTIN_OBJS += builtin/add.o
@@ -1547,6 +1547,7 @@ UNIT_TEST_OBJS += $(UNIT_TEST_DIR)/test-lib.o
 
 RUST_SOURCES += src/lib.rs
 RUST_SOURCES += src/varint.rs
+RUST_SOURCES += src/prio_queue.rs
 
 GIT-VERSION-FILE: FORCE
 	@OLD=$$(cat $@ 2>/dev/null || :) && \

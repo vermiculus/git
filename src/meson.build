@@ -1,5 +1,6 @@
 libgit_rs_sources = [
   'lib.rs',
+  'prio_queue.rs',
   'varint.rs',
 ]
 
